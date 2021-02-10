@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { CAMPSITES } from '../shared/campsites';
-import { COMMENTS } from '../shared/comments';
-
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-
 import { postFavorite } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
@@ -18,7 +14,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    postFavorite: campsiteId => (postFavorite(campsiteId))
+    postFavorite: campsiteId => postFavorite(campsiteId)
 };
 
 function RenderCampsite(props) {
@@ -29,7 +25,8 @@ function RenderCampsite(props) {
         return (
             <Card
                 featuredTitle={campsite.name}
-                image={{uri: baseUrl + campsite.image}}>
+                image={{uri: baseUrl + campsite.image}}
+            >
                 <Text style={{margin: 10}}>
                     {campsite.description}
                 </Text>
@@ -39,8 +36,11 @@ function RenderCampsite(props) {
                     color='#f50'
                     raised
                     reverse
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : props.markFavorite()}
+                    onPress={() =>
+                        props.favorite
+                            ? console.log('Already set as a favorite')
+                            : props.markFavorite()
+                    }
                 />
             </Card>
         );
@@ -53,9 +53,15 @@ function RenderComments({comments}) {
     const renderCommentItem = ({item}) => {
         return (
             <View style={{margin: 10}}>
-                <Text style={{fontSize: 14}}>{item.text}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
-                <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
+                <Text style={{fontSize: 14}}>
+                    {item.text}
+                </Text>
+                <Text style={{fontSize: 12}}>
+                    {item.rating} Stars
+                </Text>
+                <Text style={{fontSize: 12}}>
+                    {`-- ${item.author}, ${item.date}`}
+                </Text>
             </View>
         );
     };

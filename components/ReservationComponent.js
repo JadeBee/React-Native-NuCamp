@@ -21,7 +21,6 @@ class Reservation extends Component {
         title: 'Reserve Campsite'
     }
 
-    
     toggleModal() {
         this.setState({showModal: !this.state.showModal});
     }
@@ -85,7 +84,7 @@ class Reservation extends Component {
                         mode={'date'}
                         display='default'
                         onChange={(event, selectedDate) => {
-                            selectedDate && this.setState({date: selectedDate, showCalendar: false});
+                            selectedDate && this.setState({date: selectedDate, showCalendar: false})
                         }}
                         style={styles.formItem}
                     />
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
     formItem: {
         flex: 1
     },
-    modal: { 
+    modal: {
         justifyContent: 'center',
         margin: 20
     },
