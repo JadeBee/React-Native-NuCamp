@@ -109,35 +109,29 @@ class Reservation extends Component {
               accessibilityLabel="Tap me to search for available campsites to reserve"
             />
           </View>
-          <Modal
-            animationType={"slide"}
-            transparent={false}
-            visible={this.state.showModal}
-            onRequestClose={() => this.toggleModal()}
-          >
-            <View style={styles.modal}>
-              <Text style={styles.modalTitle}>
-                Search Campsite Reservations
-              </Text>
-              <Text style={styles.modalText}>
-                Number of Campers: {this.state.campers}
-              </Text>
-              <Text style={styles.modalText}>
-                Hike-In?: {this.state.hikeIn ? "Yes" : "No"}
-              </Text>
-              <Text style={styles.modalText}>
-                Date: {this.state.date.toLocaleDateString("en-US")}
-              </Text>
-              <Button
-                onPress={() => {
-                  this.toggleModal();
-                  this.resetForm();
-                }}
-                color="#5637DD"
-                title="Close"
-              />
-            </View>
-          </Modal>
+          <TouchableOpacity
+            style={styles.deleteTouchable}
+            onPress={() =>
+              Alert.alert(
+                "Begin Search?",
+                "Number of Campers: " + item.name,
+                "Hike-In? " + item.name,
+                "Date: " + item.name,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log(item.name + "Not Deleted"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => this.props.deleteFavorite(item.id),
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          ></TouchableOpacity>
         </Animatable.View>
       </ScrollView>
     );
