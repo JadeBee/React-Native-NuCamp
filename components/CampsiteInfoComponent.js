@@ -14,6 +14,7 @@ import {
   StyleSheet,
   Alert,
   PanResponder,
+  Share,
 } from "react-native";
 /*    modal, button and switch are not working bc it says that they are not being used */
 
@@ -35,6 +36,8 @@ function RenderCampsite(props) {
   const { campsite } = props;
 
   const view = React.createRef();
+
+  const recognizeComment = ({ dx }) => (dx > 200 ? true : false);
 
   const recognizeDrag = ({ dx }) => (dx < -200 ? true : false);
 
@@ -69,10 +72,25 @@ function RenderCampsite(props) {
           ],
           { cancelable: false }
         );
+      } else if (recognizeComment(gestureState)) {
+        props.onShowModal();
       }
       return true;
     },
   });
+
+  const shareCampsite = (title, message, url) => {
+    Share.share(
+      {
+        title: title,
+        message: `${title}: ${message} ${url}`,
+        url: url,
+      },
+      {
+        dialogTitle: "Share " + title,
+      }
+    );
+  };
 
   if (campsite) {
     return (
@@ -88,26 +106,42 @@ function RenderCampsite(props) {
           image={{ uri: baseUrl + campsite.image }}
         >
           <Text style={{ margin: 10 }}>{campsite.description}</Text>
-          <Icon
-            name={props.favorite ? "heart" : "heart-o"}
-            type="font-awesome"
-            color="#f50"
-            raised
-            reverse
-            onPress={() =>
-              props.favorite
-                ? console.log("Already set as a favorite")
-                : props.markFavorite()
-            }
-          />
-          <Icon
-            name={props.favorite ? "pencil" : "pencil"}
-            type="font-awesome"
-            color="#5637DD"
-            raised
-            reverse
-            onPress={() => props.onShowModal()}
-          />
+          <View style={styles.cardRow}>
+            <Icon
+              name={props.favorite ? "heart" : "heart-o"}
+              type="font-awesome"
+              color="#f50"
+              raised
+              reverse
+              onPress={() =>
+                props.favorite
+                  ? console.log("Already set as a favorite")
+                  : props.markFavorite()
+              }
+            />
+            <Icon
+              name={props.favorite ? "pencil" : "pencil"}
+              type="font-awesome"
+              color="#5637DD"
+              raised
+              reverse
+              onPress={() => props.onShowModal()}
+            />
+            <Icon
+              name={"share"}
+              type="font-awesome"
+              color="#5637DD"
+              raised
+              reverse
+              onPress={() =>
+                shareCampsite(
+                  campsite.name,
+                  campsite.description,
+                  baseUrl + campsite.image
+                )
+              }
+            />
+          </View>
         </Card>
       </Animatable.View>
     );

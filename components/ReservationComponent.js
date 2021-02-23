@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Animatable from "react-native-animatable";
+import { Alert } from "react-native";
+import * as Notifications from "expo-notifications";
 
 class Reservation extends Component {
   constructor(props) {
@@ -22,6 +24,7 @@ class Reservation extends Component {
       date: new Date(),
       showCalendar: false,
       showModal: false,
+      showAlert: false,
     };
   }
 
@@ -33,9 +36,13 @@ class Reservation extends Component {
     this.setState({ showModal: !this.state.showModal });
   }
 
+  toggleAlert() {
+    this.setState({ showAlert: !this.state.showAlert });
+  }
+
   handleReservation() {
     console.log(JSON.stringify(this.state));
-    this.toggleModal();
+    this.toggleAlert();
   }
 
   resetForm() {
@@ -46,6 +53,49 @@ class Reservation extends Component {
       showCalendar: false,
       showModal: false,
     });
+  }
+
+  createAlert = () =>
+    Alert.alert(
+      "Create Search?",
+      `Number of Campers: ${this.state.campers} \nHike-In? ${this.state.hikeIn} \nDate: ${this.state.date}`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => this.resetForm(),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => this.resetForm(),
+        },
+      ]
+    );
+
+  async presentLocalNotification(date) {
+    function sendNotification() {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+        }),
+      });
+
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Your Campsite Reservation Search",
+          body: `Search for ${date} requested`,
+        },
+        trigger: null,
+      });
+    }
+
+    let permissions = await Notifications.getPermissionsAsync();
+    if (!permissions.granted) {
+      permissions = await Notifications.requestPermissionsAsync();
+    }
+    if (permissions.granted) {
+      sendNotification();
+    }
   }
 
   render() {
@@ -103,13 +153,13 @@ class Reservation extends Component {
           )}
           <View style={styles.formRow}>
             <Button
-              onPress={() => this.handleReservation()}
+              onPress={() => this.createAlert()}
               title="Search"
               color="#5637DD"
               accessibilityLabel="Tap me to search for available campsites to reserve"
             />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.deleteTouchable}
             onPress={() =>
               Alert.alert(
@@ -131,7 +181,7 @@ class Reservation extends Component {
                 { cancelable: false }
               )
             }
-          ></TouchableOpacity>
+          ></TouchableOpacity> */}
         </Animatable.View>
       </ScrollView>
     );
